@@ -1,0 +1,96 @@
+<div class="container">
+
+    <div class="page-header text-center">
+        <h1><span class="fa fa-bug"></span> Profile Page</h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    </div>
+
+    <div class="row">
+
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-6">
+            <div class="well">
+                <h3><span class="fa fa-user"></span> Profile</h3>
+
+                <p>
+                    <strong>id</strong>: {{user.id}}<br>
+                    <strong>email</strong>: {{user.username}}<br>
+                </p>
+
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>Upload files</strong>
+                    <small></small>
+                </div>
+                <div class="panel-body">
+                    <div class="input-group image-preview">
+                        <input placeholder="" type="text" class="form-control image-preview-filename"
+                               disabled="disabled">
+                        <!-- don't give a name === doesn't send on POST/GET -->
+                        <span class="input-group-btn">
+						<!-- image-preview-clear button -->
+						<button type="button" class="btn btn-default image-preview-clear" style="display:none;"> <span
+                                class="glyphicon glyphicon-remove"></span> Clear </button>
+                            <!-- image-preview-input -->
+						<div class="btn btn-default image-preview-input"> <span
+                                class="glyphicon glyphicon-folder-open"></span> <span class="image-preview-input-title">Browse</span>
+							<input id="file_upload_input" type="file" name="input-file-preview"/>
+                            <!-- rename it -->
+						</div>
+						<button type="button" class="btn btn-labeled btn-primary"> <span class="btn-label"><i
+                                class="glyphicon glyphicon-upload"></i> </span>Upload</button>
+						</span></div>
+                    <!-- /input-group image-preview [TO HERE]-->
+
+                    <br/>
+
+                    <!-- Drop Zone -->
+                    <div class="upload-drop-zone" id="drop-zone"> Or drag and drop files here</div>
+                    <br/>
+                    <!-- Progress Bar -->
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0"
+                             aria-valuemax="100" style="width: 0%;"><span class="sr-only">60% Complete</span></div>
+                    </div>
+                    <br/>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>My files:</strong>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Created</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#each user.files}}
+                            <tr>
+                                <td>{{@index}}</td>
+                                <td>
+                                    <a href="/file/{{this._id}}">{{this.filename}}</a>
+                                </td>
+                                <td>{{prettySize this.filesize}}</td>
+                                <td>{{fromNow this.createdAt}}</td>
+                            </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/javascripts/main.js"></script>
