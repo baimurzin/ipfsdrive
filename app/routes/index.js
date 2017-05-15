@@ -65,6 +65,17 @@ module.exports = function (app, passport) {
         .get('/user', isLoggedIn, function (req, res) {
             res.json(req.user);
         })
+        .get('/user/search', isLoggedIn, function (req, res) {
+            const user = req.user,
+                fileId = req.params.id,
+                query = req.query.q;
+
+            return res.json(query);
+            User
+                .find({
+                    $elemMatch: {username: user._id}
+                })
+        })
         .get('/logout', function (req, res) {
             req.logout();
             res.redirect('/');
@@ -108,6 +119,32 @@ module.exports = function (app, passport) {
                 }
 
             }
+        })
+        .get('/file/access/:id', [isLoggedIn], function (req, res) {
+            const user = req.user,
+                fileId = req.params.id;
+
+            File
+                .findOne({
+                    $and: [
+                        {_id: fileId},
+                        {
+                            $or: [
+                                {owner: user._id},
+                                {hasAccess: {$elemMatch: {_id: user._id}}}
+                            ]
+                        }
+                    ]
+                })
+                .populate('hasAccess')
+                .exec(function (err, file) {
+                    if (err) {
+                        console.log(err);
+                        res.sendStatus(500);
+                        return res.json(err);
+                    }
+                    return res.json(file);
+                })
         })
         .get('/file/:id', [isLoggedIn], function (req, res) {
             const user = req.user,
@@ -220,6 +257,9 @@ module.exports = function (app, passport) {
         .get('/test2', function (req, res) {
             const user = req.user;
 
+        })
+        .get('/user', function (req, res) {
+            return res.end(req.user);
         })
 };
 

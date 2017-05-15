@@ -61,6 +61,30 @@ document.addEventListener("DOMContentLoaded", function (event) {
         bar.style.width = value;
     }
 
+});
 
+$(function () {
+    $('#shareModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget);
+        const fileId = button.data('file');
+        const modal = $(this);
 
+        $.get('/file/access/' + fileId, function (data) {
+            console.log(data);
+        });
+
+        // modal.find('.modal-title').text('New message to ' + fileId)
+        // modal.find('.modal-body input').val(fileId)
+    })
+
+    $("#accessSelect").select2({
+        minimumInputLength: 2,
+        multiple:true,
+        width: '100%',
+        dropdownAutoWidth : true,
+        placeholder: 'Start typing',
+        ajax: {
+            url: '/user/search'
+        }
+    })
 });
