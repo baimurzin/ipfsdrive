@@ -68,14 +68,19 @@ $(function () {
         const button = $(event.relatedTarget);
         const fileId = button.data('file');
         const modal = $(this);
+        $(this).data('fileId', fileId);
 
         $.get('/file/access/' + fileId, function (data) {
-            console.log(data);
+            let container = $(".users-accessed");
+            container.html('');
+            data.hasAccess.forEach(function (item) {
+                container.append(`<div class="label label-success">${item.username}</div> `)
+            })
         });
 
         // modal.find('.modal-title').text('New message to ' + fileId)
         // modal.find('.modal-body input').val(fileId)
-    })
+    });
 
     $("#accessSelect").select2({
         minimumInputLength: 2,
@@ -84,7 +89,29 @@ $(function () {
         dropdownAutoWidth : true,
         placeholder: 'Start typing',
         ajax: {
-            url: '/user/search'
+            url: '/user/search',
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item, i) {
+                        return {
+                            text: item.username,
+                            id: item._id
+                        }
+                    })
+                };
+            }
         }
+    });
+
+    $('.btn-save-users').on('click', function (e) {
+
+        $.ajax({
+            url: '/user/getAccess/' + $('#shareModal').data('fileId'),
+            data: {
+                users: $("#accessSelect").val()
+            },
+            type: "post"
+    })
     })
 });

@@ -14,6 +14,7 @@
     "express": "^4.15.2",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.2",
+    "gpg": "^0.6.0",
     "http-errors": "^1.6.1",
     "ipfs": "^0.23.1",
     "method-override": "^2.3.8",

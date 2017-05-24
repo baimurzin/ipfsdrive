@@ -40,6 +40,12 @@ let hbs = exphbs.create({
         },
         prettySize: function (size) {
             return prettyBytes(size);
+        },
+        if_eq: function (a, b, opts) {
+            if(a == b) // Or === depending on your needs
+                return opts.fn(this);
+            else
+                return opts.inverse(this);
         }
     },
     defaultLayout: 'main',

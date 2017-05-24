@@ -70,15 +70,58 @@ module.exports = function (app, passport) {
                 fileId = req.params.id,
                 query = req.query.q;
 
-            return res.json(query);
             User
-                .find({
-                    $elemMatch: {username: user._id}
+                .find({username: {$ne: user.username, $regex: new RegExp(query, 'i')}})
+                .exec(function (err, users) {
+                    if (err) {
+                        console.log(err);
+                        return res.json("error");
+                    }
+                    return res.json(users);
                 })
         })
         .get('/logout', function (req, res) {
             req.logout();
             res.redirect('/');
+        })
+        .post('/user/getAccess/:fileId', [isLoggedIn], function (req, res) {
+            const user = req.user,
+                userIds = req.body.users,
+                fileId = req.params.fileId;
+
+            if (userIds) {
+                User
+                    .find({_id: {$in: userIds}})
+                    .exec(function (err, users) {
+                        if (err) {
+                            console.log(err);
+                        }
+
+                        File
+                            .update(
+                                {
+                                    _id: fileId
+                                },
+                                {
+                                    $addToSet: {hasAccess: {$each: users}}
+                                },
+                                function (err, results) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    User
+                                        .update(users, {
+                                            $addToSet: {files: fileId}
+                                        }, {multi: true}, function (err, userSaveResult) {
+                                            if (err) {
+                                                console.log(err);
+                                            }
+                                            return res.json(userSaveResult);
+                                        });
+                                }
+                            )
+                    })
+            }
         })
         .post('/file', [isLoggedIn, upload.single('file')], function (req, res, next) {
             if (req.file) {
@@ -187,7 +230,7 @@ module.exports = function (app, passport) {
                             cryptoService.decrypt(arrbuf).then(function (decoded) {
                                 let bufferedData = new Buffer(decoded.data);
                                 return res.send(bufferedData);
-                            },function (errm ) {
+                            }, function (errm) {
                                 console.log(errm);
                             })
                         }));

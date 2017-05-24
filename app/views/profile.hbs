@@ -14,7 +14,7 @@
 
                 <p>
                     <strong>id</strong>: {{user.id}}<br>
-                    <strong>email</strong>: {{user.username}}<br>
+                    <strong>username</strong>: {{user.username}}<br>
                 </p>
 
             </div>
@@ -84,12 +84,14 @@
                                 <td>{{prettySize this.filesize}}</td>
                                 <td>{{fromNow this.createdAt}}</td>
                                 <td>
-                                    <button type="button"
-                                            class="btn btn-primary btn-sm" data-toggle="modal"
-                                            data-target="#shareModal"
-                                            data-file="{{this._id}}"
-                                    >Share
-                                    </button>
+                                    {{#if_eq this.owner ../user.id}}
+                                        <button type="button"
+                                                class="btn btn-primary btn-sm" data-toggle="modal"
+                                                data-target="#shareModal"
+                                                data-file="{{this._id}}"
+                                        >Share
+                                        </button>
+                                    {{/if_eq}}
                                 </td>
                             </tr>
                         {{/each}}
@@ -114,7 +116,18 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <select id="accessSelect" class="select2"></select>
+                        <select id="accessSelect" class="select2" multiple></select>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-4 users-accessed" style="font-size: 19px;">
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-offset-10 col-md-2">
+                        <button class="btn btn-success btn-save-users">Save</button>
                     </div>
                 </div>
             </div>
